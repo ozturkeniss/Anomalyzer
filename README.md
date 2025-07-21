@@ -2,6 +2,12 @@
 
 A real-time anomaly detection and automated remediation system using AI/ML, Kafka, and microservices architecture.
 
+
+
+https://github.com/user-attachments/assets/5e439e84-f3ea-4aaa-9437-3b8648c51fda
+
+
+
 ## Architecture Overview
 
 ```mermaid
