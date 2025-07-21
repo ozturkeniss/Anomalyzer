@@ -1,0 +1,74 @@
+version: '3.8'
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    ports:
+      - "9092:9092"
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - "9090:9090"
+
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_MODELS=llama3
+
+  ubuntu:
+    build:
+      context: ./ubuntu
+    ports:
+      - "8000:8000"
+
+  server:
+    build:
+      context: ./server
+    depends_on:
+      - kafka
+      - prometheus
+    environment:
+      - KAFKA_BROKERS=kafka:9092
+    volumes:
+      - ./server/scripts:/app/scripts
+    ports:
+      - "9000:9000"
+
+  ai-engine:
+    build:
+      context: ./ai-engine
+    depends_on:
+      - kafka
+      - ollama
+      - prometheus
+    environment:
+      - KAFKA_BROKERS=kafka:9092
+      - OLLAMA_HOST=ollama:11434
+    ports:
+      - "5000:5000"
+
+volumes:
+  ollama_data: 
