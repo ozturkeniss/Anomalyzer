@@ -4,7 +4,10 @@ A real-time anomaly detection and automated remediation system using AI/ML, Kafk
 
 
 
-https://github.com/user-attachments/assets/3ea2895d-a227-4cb6-a807-88e35312ec37
+
+https://github.com/user-attachments/assets/b5682691-bbc7-4976-a2a0-14914fd2efb8
+
+
 
 
 
